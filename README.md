@@ -2,6 +2,14 @@
 # Ghetto Zen Map - Interactive Nmap Console Application Poorly Written by Noobs in Python
 
 
+Open VsCode and paste the following command to install the collab plugin
+
+```
+ext install MS-vsliveshare.vsliveshare
+```
+
+
+
 Create a Venv in the project directory, set it as active, then run
 
 ```python
