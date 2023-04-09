@@ -1,4 +1,5 @@
 import modules.commands.term as term
+import modules.commands.menus as menus   
 import pyfiglet
 import subprocess
 import inquirer
@@ -14,57 +15,51 @@ magenta = "m"
 
 # Application Entry Point
 def run():
+    # Menus
+    main_menu = {
+        "Nmap": show_run_menu,
+        "Directory Enumeration": show_run_menu,
+        "Help": "",
+        "Exit": "exit",
+    }
+    
     term.clear()
     printy(app_name, yellow)
     printy(welcome_mesage, magenta)
+    show_folder_menu(main_menu)
     
-    menu_main()
-    
-    
-def menu_main():
+def show_folder_menu(menu, ):
     questions = [
         inquirer.List(
             "action",
             message="What would you like to do?",
-        choices=["Nmap", "Help", "Exit"],
+        choices=menu.keys(),
         ),
     ]
     action = inquirer.prompt(questions)
     
-    match (action.get("action")):
-        case "Nmap":
-            printy("Nmap Selected", yellow)
-            menu_nmap()
-        case "Help":
-            printy("Help Selected", yellow)
-        case "Exit":
-            printy("Exiting", yellow)
-            subprocess.run("clear")
-            exit()
-        case _: 
-            printy("Invalid Option", yellow)
-            run()
-
-def menu_nmap():
+    if action["action"] == "Exit":
+        exit()
+    elif action["action"] == "Help":
+        show_help()
+    else:
+        menu.get(action["action"])(menus.get_options(action["action"]))
+    
+def show_run_menu(menu_options):
     questions = [
         inquirer.List(
             "action",
             message="What would you like to do?",
-        choices=["Banners", "Port Scan", "Exit"],
+        choices=menu_options.keys(),
         ),
     ]
     action = inquirer.prompt(questions)
+    action = action.get("action")
+    subprocess.run(menu_options.get(action).split())
     
-    match (action.get("action")):
-        case "Banners":
-            printy("Banners Selected", yellow)
-            
-        case "Port Scan":
-            printy("Port Scan Selected", yellow)
-        case "Exit":
-            printy("Exiting", yellow)
-            subprocess.run("clear")
-            exit()
-        case _: 
-            printy("Invalid Option", yellow)
-            menu_nmap()
+def show_help():
+    printy("Help", yellow)
+    printy("This is the help menu", magenta)
+    printy("Press any key to continue", magenta)
+    input()
+    run()
