@@ -1,65 +1,66 @@
+
+# * SECTION Local Imports
 import modules.commands.term as term
-import modules.commands.menus as menus   
-import pyfiglet
+import modules.commands.menus as menus
+
+# * SECTION built-in Imports
+#! NOTE used to run shell commands
 import subprocess
+from enum import Enum, StrEnum
+# * SECTION Third Party Imports
+
+
+#! NOTE used to print ascii art
+import pyfiglet
+
+#! NOTE used to create interactive menus
 import inquirer
+
+#! NOTE used to print colored text
 from printy import printy
-  
-# Application Strings
-app_name =  pyfiglet.figlet_format("gzmap", font = "doh", width = 200)
-welcome_mesage = "Welcome to gzmap, Use the Arrow Keys to navigate and press Enter to select : "
 
-# Colors for printy
-yellow = "y"
-magenta = "m"
+# * SECTION Application Strings
+app_name: str = pyfiglet.figlet_format("gzmap", font="doh", width=200)
+welcome_mesage: str = "Welcome to gzmap, Use the Arrow Keys to navigate and press Enter to select : "
 
-# Application Entry Point
-def run():
-    # Menus
-    main_menu = {
-        "Nmap": show_run_menu,
-        "Directory Enumeration": show_run_menu,
-        "Help": "",
-        "Exit": "exit",
+# * SECTION Colors for printy
+yellow: str = "y"
+magenta: str = "m"
+
+modes: StrEnum = menus.Menu.modes
+
+
+def NmapMenu():
+    nmap_menu_options = menus.MenuOptions(
+        {"Nmap": {modes.COMMAND: "nmap"}, "Exit": {modes.FUNCTION: exit}}
+    )
+    return menus.Menu(nmap_menu_options, inquirer, subprocess)
+
+
+# * SECTION Menu Options
+#! NOTE
+main_menu_options = menus.MenuOptions(
+    {
+        "Nmap": {modes.MENU: NmapMenu().show},
+        "Nukem": {modes.COMMAND: "nmap"},
+        "Exit": {modes.FUNCTION: exit},
     }
-    
+)
+
+
+# * SECTION Menus
+#! NOTE __name__ is the name of the current module, we pass this to the Menu class to prevent reimporting modules
+main_menu_folder = menus.Menu(main_menu_options, inquirer, subprocess)
+
+
+#! NOTE Application Entry Point
+def run():
+    term.clear()
+    show_welcome_message()
+    main_menu_folder.show()
+
+
+def show_welcome_message():
     term.clear()
     printy(app_name, yellow)
     printy(welcome_mesage, magenta)
-    show_folder_menu(main_menu)
-    
-def show_folder_menu(menu, ):
-    questions = [
-        inquirer.List(
-            "action",
-            message="What would you like to do?",
-        choices=menu.keys(),
-        ),
-    ]
-    action = inquirer.prompt(questions)
-    
-    if action["action"] == "Exit":
-        exit()
-    elif action["action"] == "Help":
-        show_help()
-    else:
-        menu.get(action["action"])(menus.get_options(action["action"]))
-    
-def show_run_menu(menu_options):
-    questions = [
-        inquirer.List(
-            "action",
-            message="What would you like to do?",
-        choices=menu_options.keys(),
-        ),
-    ]
-    action = inquirer.prompt(questions)
-    action = action.get("action")
-    subprocess.run(menu_options.get(action).split())
-    
-def show_help():
-    printy("Help", yellow)
-    printy("This is the help menu", magenta)
-    printy("Press any key to continue", magenta)
-    input()
-    run()
