@@ -9,7 +9,7 @@ class MenuOptions:
 class Menu:
     modes: StrEnum = StrEnum("modes", ["COMMAND", "MENU", "FUNCTION"])
 
-    def __init__(self, menu: MenuOptions, inquirer, subprocess, args: list[str]=None):
+    def __init__(self, menu: MenuOptions, inquirer, subprocess, args=None):
         self.menu = menu
         self.inquirer = inquirer
         self.subprocess = subprocess
@@ -27,7 +27,7 @@ class Menu:
         self.action = self.action["action"]
 
         if Menu.modes.MENU in self.menu.options[self.action]:
-            self.menu.options[self.action][Menu.modes.MENU]()
+            self.menu.options[self.action][Menu.modes.MENU]["showMenu"]().show()
         if Menu.modes.COMMAND in self.menu.options[self.action]:
             self.subprocess.run(
                 self.menu.options[self.action][Menu.modes.COMMAND].split()
