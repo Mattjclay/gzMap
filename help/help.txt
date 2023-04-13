@@ -1,0 +1,66 @@
+NMAP Commands Cheat Sheet
+The following is a Nmap Command CheatSheet that contains some useful Nmap Commands:
+
+Nmap commands for Port Selection:
+
+Description	Commands
+To scan a single port using Nmap:	nmap -p 8 192.168.1.1
+To scan a range of ports using Nmap:	nmap -p 1-20 192.168.1.1
+For scanning common ports of the network:	nmap -F 192.168.1.1
+If you want to scan all the 65532 ports of the network, then use the corresponding command:	nmap -p- 192.168.1.1
+Nmap Commands for Target Selection:
+
+Description	Commands
+To scan a single IP host:	nmap 192.168.1.1
+For scanning the range of IPs:	nmap 192.168.1.1-15
+If you want to scan a single host:	nmap www.<hostname>.com
+For scanning targets from text file, you should use the corresponding Nmap command:	nmap -iL target-ip-lists.txt
+These commands are used to perform default scans using Nmap and it scans 1000 TCP ports where host discovery will also take place. 
+
+Nmap commands for OS and Version Detection:
+
+Description	Commands
+For detection of OS and the services:	nmap -A 192.168.1.1
+To detect aggressive services:	nmap -sV –version-intensity 4 192.168.1.1
+For standard version detection:	nmap -sV 192.168.1.1
+The above commands are used to determine the operating system running on a particular port of the network. The command that we discussed for aggressive services detection can be used for the services running on unusual ports of the network. 
+
+Nmap commands for different Output Formats:
+
+Description 	Commands
+If you want to save default output to a file:	nmap -oN op.txt 192.168.1.1
+To save the output in all formats:	nmap -oA op 192.168.1.1
+To save results in XML format:	nmap -oX op.xml 192.168.1.1
+To save the Nmap results in format for grep:	nmap -oG op.txt 192.168.1.1
+The default output can also be saved by simple redirecting the file with the command: command>file. In the above command, oN is used to save the results and also monitors the terminal for scanning. 
+
+Nmap command for IP address info:
+
+To get the information of IP Address:	nmap- –script=asn-query, whois, ip-geolocation-stateloc 192.168.0.1/22
+The command above can be used to get the details related to the IP address and owner of that IP address. This command uses WhoIS, GeoIP location lookups and ASN query. 
+
+Nmap commands to gather HTTP service information:
+
+Description	Commands
+To get the HTTP headers of web services:	nmap –script=http-title 192.168.1.0/24
+Command to find web apps from specific paths:	nmap –script=http-enum 192.168.1.0/24
+To gather the data about page titles from HTTP services:	nmap –script=http-title 192.168.10/24
+These commands used to get the details about HTTP service are very useful for larger networks as it identifies the HTTP services on the network and reports immediately results. 
+
+To get more information about NSE scripts:
+
+Description	Commands
+To scan some default scripts: 	nmap -sV -sC 192.168.1.1
+Nmap command for scanning a set of scripts:	nmap -sV –script=aqb* 192.168.1.1
+To scan a specific NSE script:	nmap -sV -p 443 –script=ssl-gl.nse 192.168.1.1
+To get help for a script: 	nmap –script-help=ssl-gl
+There are several NSE scripts in nmap that can be used for a wide range of security testing in the network. These scripts are also helpful in the discovery of new networks. The -sV parameter used in the commands above is used as a service detection parameter. 
+
+Nmap commands for port scan types:
+
+Description	Commands
+To scan selected ports 	nmap -Pn -F 192.168.1.1
+Nmap command to scan UDP ports:	nmap -sU -p 123, 161, 162, 192.168.1.1
+To scan using TCP SYN scan : 	nmap -sS 192.168.1.1
+To scan using TCP connect to port: 	nmap -sT 192.168.1.1
+These commands are very useful to scan port types. The SYN scan requires some privileged access and it uses TCP connect scan for insufficient privileges. The -Pn in the above commands is used for the PING parameter.

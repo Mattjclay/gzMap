@@ -1,0 +1,8 @@
+# Nmap 7.93 scan initiated Wed Apr 12 20:32:08 2023 as: nmap -sV -sC -A -p- -oN ./projects/default/nmap/port_scans/scan_all_ports_1.txt 127.69.696
+Nmap scan report for 127.69.696 (127.69.2.184)
+Host is up (0.000034s latency).
+All 65535 scanned ports on 127.69.696 (127.69.2.184) are in ignored states.
+Not shown: 65535 closed tcp ports (conn-refused)
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Wed Apr 12 20:32:09 2023 -- 1 IP address (1 host up) scanned in 0.89 seconds

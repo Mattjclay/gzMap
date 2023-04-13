@@ -7,15 +7,40 @@ class MenuOptions:
 
 
 class Menu:
-    modes: StrEnum = StrEnum("modes", ["COMMAND", "MENU", "FUNCTION"])
+    modes = StrEnum("modes", ["COMMAND", "MENU", "FUNCTION", "HELP"])
 
-    def __init__(self, menu: MenuOptions, inquirer, subprocess, args=None):
-        self.menu = menu
+    def __init__(
+        self,
+        menu,
+        inquirer,
+        subprocess,
+        printy,
+        name=None,
+        colors=None,
+        target=None,
+        args=None,
+        activeMenu=None,
+        welcomeMessage=None
+        
+    ):
+        self.name = name
+        self.menu = menu()
         self.inquirer = inquirer
         self.subprocess = subprocess
+        self.printy = printy
         self.args = args
+        self.colors = colors
+        self.target = target
+        self.activeMenu = activeMenu
+        self.welcomeMessage = welcomeMessage
 
     def show(self):
+        self.activeMenu(self)
+        self.welcomeMessage()
+        self.printy(f"Showing {self.name} ", self.colors.get("magenta"))
+        self.printy(f"Active Project: {self.target()['project']}", self.colors.get("red"))
+        self.printy(f"Target IP: {self.target()['ip']}", self.colors.get("red"))
+        self.printy(f"Target Ports: {self.target()['ports']}", self.colors.get("red"))
         self.questions = [
             self.inquirer.List(
                 "action",
@@ -32,5 +57,16 @@ class Menu:
             self.subprocess.run(
                 self.menu.options[self.action][Menu.modes.COMMAND].split()
             )
+            self.subprocess.run("clear")
+            
         if Menu.modes.FUNCTION in self.menu.options[self.action]:
             self.menu.options[self.action][Menu.modes.FUNCTION]()
+        if Menu.modes.HELP in self.menu.options[self.action]:
+            self.menu.options[self.action][Menu.modes.HELP](self)
+
+    def readInput(self, _message="Enter a prompt "):
+        self.questions = [
+            self.inquirer.Text("result", message=_message),
+        ]
+        self.answers = self.inquirer.prompt(self.questions)
+        return self.answers["result"]
