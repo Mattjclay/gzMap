@@ -20,8 +20,7 @@ class Menu:
         target=None,
         args=None,
         activeMenu=None,
-        welcomeMessage=None
-        
+        welcomeMessage=None,
     ):
         self.name = name
         self.menu = menu()
@@ -38,7 +37,9 @@ class Menu:
         self.activeMenu(self)
         self.welcomeMessage()
         self.printy(f"Showing {self.name} ", self.colors.get("magenta"))
-        self.printy(f"Active Project: {self.target()['project']}", self.colors.get("red"))
+        self.printy(
+            f"Active Project: {self.target()['project']}", self.colors.get("red")
+        )
         self.printy(f"Target IP: {self.target()['ip']}", self.colors.get("red"))
         self.printy(f"Target Ports: {self.target()['ports']}", self.colors.get("red"))
         self.questions = [
@@ -50,19 +51,12 @@ class Menu:
         ]
         self.action = self.inquirer.prompt(self.questions)
         self.action = self.action["action"]
-
-        if Menu.modes.MENU in self.menu.options[self.action]:
-            self.menu.options[self.action][Menu.modes.MENU]["showMenu"]().show()
-        if Menu.modes.COMMAND in self.menu.options[self.action]:
-            self.subprocess.run(
-                self.menu.options[self.action][Menu.modes.COMMAND].split()
-            )
-            self.subprocess.run("clear")
-            
-        if Menu.modes.FUNCTION in self.menu.options[self.action]:
-            self.menu.options[self.action][Menu.modes.FUNCTION]()
-        if Menu.modes.HELP in self.menu.options[self.action]:
-            self.menu.options[self.action][Menu.modes.HELP](self)
+        
+        self.menu.options[self.action]()
+        
+        
+        
+       
 
     def readInput(self, _message="Enter a prompt "):
         self.questions = [

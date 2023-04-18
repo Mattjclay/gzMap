@@ -1,6 +1,7 @@
 # * SECTION Local Imports
 import modules.commands.term as term
 import modules.commands.menus as menus
+import modules.commands.command as command
 
 # * SECTION built-in Imports
 #! NOTE used to run shell commands
@@ -21,15 +22,6 @@ import inquirer
 
 #! NOTE used to print colored text
 from printy import printy, inputy
-
-
-
-
-
-
-
-
-
 
 
 # * SECTION Application Strings
@@ -54,14 +46,13 @@ colors = {
 }
 
 
-
-
 def get_active_project():
     with open(get_active_project_file_path(), "r") as file:
         return file.read()
 
+
 def set_active_project():
-    project_name = NmapMenu().readInput("Enter Project Name: ")
+    project_name = MainMenu().readInput("Enter Project Name: ")
     project_name = project_name.replace(" ", "_")
     project_name = project_name.replace("/", "_")
     project_name = project_name.replace("\\", "_")
@@ -73,12 +64,11 @@ def set_active_project():
     try:
         with open(get_active_project_file_path(), "w") as file:
             file.write(project_name)
-            
+
     except:
         with open(get_active_project_file_path(), "x") as file:
             file.write(project_name)
     setupProject()
-        
 
 
 # * SECTION File Paths
@@ -123,8 +113,6 @@ def get_nmap_port_scan_output_file_path():
 
 
 # * SECTION Menu Options
-#! NOTE
-modes = menus.Menu.modes
 
 
 def show_welcome_message():
@@ -139,14 +127,18 @@ def get_target_info():
 
 def NmapMenu():
     def get_menu_options():
+        _setup = command.Function(callback=setupNMAP)
+        _scan_all_ports = command.Command(
+            cmd=f"nmap -sV -sC -A -p- -oN {get_nmap_port_scan_output_file_path()}{get_nmap_scan_all_ports_output_file_name()}  {getIP()}"
+        )
+        _help = command.Function(callback=showHelp, args=MainMenu())
+        _back = command.OpenMenu(menu=MainMenu)
         return menus.MenuOptions(
             {
-                "Setup": {modes.FUNCTION: setupNMAP},
-                "Scan All Ports": {
-                    modes.COMMAND: f"nmap -sV -sC -A -p- -oN {get_nmap_port_scan_output_file_path()}{get_nmap_scan_all_ports_output_file_name()}  {getIP()}"
-                },
-                "Help": {modes.HELP: showHelp},
-                "Back": {modes.MENU: {"showMenu": MainMenu}},
+                "Setup": _setup.run,
+                "Scan All Ports": _scan_all_ports.run,
+                "Help": _help.run,
+                "Back": _back.run,
             }
         )
 
@@ -164,12 +156,16 @@ def NmapMenu():
 
 
 def MainMenu():
+    _set_active_project = command.Function(callback=set_active_project)
+    _open_namp_menu = command.OpenMenu(menu=NmapMenu)
+    _exit = command.Function(callback=exit)
+
     def get_menu_options():
         return menus.MenuOptions(
             {
-                "Set Active Project": {modes.FUNCTION: set_active_project},
-                "Nmap": {modes.MENU: {"showMenu": NmapMenu}},
-                "Exit": {modes.FUNCTION: exit},
+                "Set Active Project": _set_active_project.run,
+                "Nmap": _open_namp_menu.run,
+                "Exit": _exit.run,
             }
         )
 
@@ -213,7 +209,7 @@ def showHelp(lastMenu):
 
 def set_IP():
     ip = NmapMenu().readInput("Enter IP Address ")
-    with open(get_nmap_ip_file_path(),"w") as file:
+    with open(get_nmap_ip_file_path(), "w") as file:
         file.write(ip)
 
 
@@ -221,7 +217,7 @@ def set_ports():
     ports = NmapMenu().readInput(
         "Enter Port range, separated by a hyphen, EX. 69-6969  "
     )
-    with open(get_nmap_ports_file_path(),"w") as file:
+    with open(get_nmap_ports_file_path(), "w") as file:
         file.write(ports)
 
 
@@ -234,19 +230,20 @@ def getPorts():
     with open(get_nmap_ports_file_path(), "r") as file:
         return file.read()
 
+
 def setupProject():
     project_path = f"./projects/{get_active_project()}/nmap/port_scans"
     ip_file = f"./projects/{get_active_project()}/nmap/ip.txt"
     port_file = f"./projects/{get_active_project()}/nmap/ports.txt"
     if os.path.exists(f"./projects/{get_active_project()}"):
         return
-    else :
+    else:
         os.makedirs(project_path, exist_ok=True)
         file = open(ip_file, "x")
         file.close()
-        file = open (port_file, "x")
+        file = open(port_file, "x")
         file.close()
-        
+
 
 def setupNMAP():
     set_active_project()
